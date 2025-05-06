@@ -1,9 +1,8 @@
-// DetailsView.tsx
 import React from "react";
 import "../../styles/DetailsView.css";
 
 // Mock data (igual que en resultados)
-const mockFlightDetails = {
+const flight = {
   id: "1",
   departure: "2025-06-01T08:00",
   arrival: "2025-06-01T12:30",
@@ -38,7 +37,7 @@ const mockFlightDetails = {
       amenities: [{ name: "Meal", chargeable: false }],
     },
   ],
-  price: {
+  priceBreakdown: {
     base: 280,
     total: 320,
     fees: 40,
@@ -47,88 +46,83 @@ const mockFlightDetails = {
   },
 };
 
-const DetailsView: React.FC = () => {
-  const flight = mockFlightDetails; // Aquí usarías un fetch por ID real
+const DetailsView = () => {
+  const { segments, priceBreakdown } = flight;
 
   return (
-    <div className="details-container">
+    <div className="details-wrapper">
       <button className="back-button" onClick={() => console.log("back")}>
-        ← Back to Results
+        ← Back
       </button>
-      <h2>Flight Details</h2>
 
-      <div className="summary">
-        <p>
-          <strong>
-            {flight.from.name} ({flight.from.code})
-          </strong>{" "}
-          →{" "}
-          <strong>
-            {flight.to.name} ({flight.to.code})
-          </strong>
-        </p>
-        <p>
-          {new Date(flight.departure).toLocaleString()} -{" "}
-          {new Date(flight.arrival).toLocaleString()}
-        </p>
-        <p>
-          Airline: {flight.airline.name} ({flight.airline.code})
-        </p>
-        {flight.operating && flight.operating.code !== flight.airline.code && (
-          <p>
-            Operated by: {flight.operating.name} ({flight.operating.code})
-          </p>
-        )}
-      </div>
+      <div className="details-layout">
+        {/* Segmentos */}
+        <div className="segments-column">
+          {segments.map((segment: any, index: number) => (
+            <div key={index} className="segment-box">
+              <h3>Segment {index + 1}</h3>
+              <p>
+                {segment.departure} - {segment.arrival}
+              </p>
+              <p>
+                {flight.from.name} ({flight.from.code}) - {flight.to.name} (
+                {flight.to.code})
+              </p>
+              <p>
+                {segment.airline.name} ({segment.airline.code}){" "}
+                {segment.flightNumber}
+              </p>
+              {segment.operating && (
+                <p>
+                  Operated by {segment.operating.name} ({segment.operating.code}
+                  )
+                </p>
+              )}
+              <p>Aircraft: {segment.aircraft}</p>
+              <p>
+                Cabin: {segment.cabin}, Class: {segment.class}
+              </p>
 
-      <h3>Segments</h3>
-      {flight.segments.map((seg, index) => (
-        <div key={index} className="segment">
-          <p>
-            {new Date(seg.departure).toLocaleString()} →{" "}
-            {new Date(seg.arrival).toLocaleString()}
-          </p>
-          <p>
-            {seg.airline.name} ({seg.airline.code}) · Flight {seg.flightNumber}
-          </p>
-          {seg.operating && (
+              <div className="fare-box">
+                <h4>Travelers fare details</h4>
+                <ul>
+                  {segment.amenities.map((amenity: any, i: number) => (
+                    <li key={i}>
+                      {amenity.name} -{" "}
+                      {amenity.chargeable ? "Chargeable" : "Free"}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Price Breakdown */}
+        <div className="price-column">
+          <div className="price-breakdown">
+            <h3>Price Breakdown</h3>
             <p>
-              Operated by: {seg.operating.name} ({seg.operating.code})
+              <strong>Base:</strong> {priceBreakdown.base}{" "}
+              {priceBreakdown.currency}
             </p>
-          )}
-          <p>Aircraft: {seg.aircraft}</p>
-          <p>
-            Cabin: {seg.cabin}, Class: {seg.class}
-          </p>
-          <div className="amenities">
-            <strong>Amenities:</strong>
-            <ul>
-              {seg.amenities.map((am, i) => (
-                <li key={i}>
-                  {am.name} {am.chargeable ? "(Chargeable)" : "(Free)"}
-                </li>
-              ))}
-            </ul>
+            <p>
+              <strong>Fees:</strong> {priceBreakdown.fees}{" "}
+              {priceBreakdown.currency}
+            </p>
+            <p>
+              <strong>Total:</strong> {priceBreakdown.total}{" "}
+              {priceBreakdown.currency}
+            </p>
+
+            <div className="per-traveler-box">
+              <h4>Per Traveler</h4>
+              <p>
+                {priceBreakdown.perTraveler} {priceBreakdown.currency}
+              </p>
+            </div>
           </div>
         </div>
-      ))}
-
-      <h3>Price Breakdown</h3>
-      <div className="price-box">
-        <p>
-          Base Price: {flight.price.currency} ${flight.price.base}
-        </p>
-        <p>
-          Fees: {flight.price.currency} ${flight.price.fees}
-        </p>
-        <p>
-          <strong>
-            Total: {flight.price.currency} ${flight.price.total}
-          </strong>
-        </p>
-        <p>
-          Per Traveler: {flight.price.currency} ${flight.price.perTraveler}
-        </p>
       </div>
     </div>
   );
