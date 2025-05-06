@@ -1,13 +1,14 @@
 import { useState } from "react";
-import SearchView from "./components/SearchView/SearchView";
 import "./App.css";
 import React from "react";
+import SearchView from "./components/SearchView/SearchView";
+import FlightResultsView from "./components/SearchResults/FlightResultsView";
 
 function App() {
   return (
-    <div className="App">
-      <SearchView></SearchView>
-    </div>
+    <>
+      <FlightResultsView></FlightResultsView>
+    </>
   );
 }
 

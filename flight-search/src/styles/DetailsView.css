@@ -1,0 +1,74 @@
+/* DetailsView.css */
+
+.details-wrapper {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .back-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    text-decoration: underline;
+  }
+  
+  .details-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+  
+  .segments-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .segment-box {
+    background-color: #f4faff;
+    border: 1px solid #cce0ff;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.1);
+    position: relative;
+  }
+  
+  .fare-box {
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin-top: 1rem;
+    background-color: #ffffff;
+  }
+  
+  .price-column {
+    background-color: #f0f8ff;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.1);
+  }
+  
+  .price-breakdown {
+    background-color: white;
+    padding: 1rem;
+    border: 1px solid #cce0ff;
+    border-radius: 10px;
+  }
+  
+  .per-traveler-box {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+  }
+  
+  h3, h4 {
+    color: #0056b3;
+  }
+  
