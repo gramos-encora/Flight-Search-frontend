@@ -1,0 +1,54 @@
+/* DetailsView.css */
+
+.details-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: #f0f8ff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .back-button {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    text-decoration: underline;
+  }
+  
+  .summary, .segment, .price-box {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.1);
+  }
+  
+  .summary p, .segment p, .price-box p {
+    margin: 0.4rem 0;
+  }
+  
+  .segment {
+    border-left: 4px solid #007bff;
+    padding-left: 1rem;
+  }
+  
+  .amenities ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    padding-left: 0;
+  }
+  
+  .amenities li {
+    margin-bottom: 0.3rem;
+  }
+  
+  h2, h3 {
+    color: #0056b3;
+    margin-top: 1rem;
+  }
+  
