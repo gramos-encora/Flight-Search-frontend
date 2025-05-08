@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useState } from "react";
 import "../../styles/SearchView.css";
-import { fetchAirlines } from "../../network/NetworkManager";
+import { fetchAirports } from "../../network/NetworkManager";
+import { Airport } from "../../models/Airport";
 
 interface SearchForm {
   departureAirport: string;
@@ -12,7 +13,6 @@ interface SearchForm {
 }
 
 const SearchView: React.FC = () => {
-  const [search, setSearch] = useState<string>("");
   const [formData, setFormData] = useState<SearchForm>({
     departureAirport: "",
     arrivalAirport: "",
@@ -22,23 +22,56 @@ const SearchView: React.FC = () => {
     isNonStop: false,
   });
 
-  const handleInputChange = (
+  const [arrivalSuggestions, setArrivalSuggestions] = useState<Airport[]>([]);
+  const [departureSuggestions, setDepartureSuggestions] = useState<Airport[]>(
+    []
+  );
+
+  const handleInputChange = async (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const target = e.target;
-    const name = target.name;
+    const { name } = e.target;
     let value: string | boolean;
 
-    if (target instanceof HTMLInputElement && name === "isNonStop") {
-      value = target.checked; // Validate that we are on a checkbox event to access 'checked'
+    if (e.target instanceof HTMLInputElement && name === "isNonStop") {
+      value = e.target.checked;
     } else {
-      value = target.value;
+      value = e.target.value;
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Autocompletar si se escribe en arrivalAirport o departureAirport
+    if (
+      (name === "arrivalAirport" || name === "departureAirport") &&
+      typeof value === "string" &&
+      value.length >= 2
+    ) {
+      try {
+        const airports = await fetchAirports(value);
+        if (name === "arrivalAirport") setArrivalSuggestions(airports);
+        if (name === "departureAirport") setDepartureSuggestions(airports);
+      } catch (err) {
+        console.error("Error fetching airports", err);
+        if (name === "arrivalAirport") setArrivalSuggestions([]);
+        if (name === "departureAirport") setDepartureSuggestions([]);
+      }
+    } else {
+      if (name === "arrivalAirport") setArrivalSuggestions([]);
+      if (name === "departureAirport") setDepartureSuggestions([]);
+    }
+  };
+
+  const handleAirportSelect = (
+    iataCode: string,
+    field: "arrivalAirport" | "departureAirport"
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: iataCode,
     }));
+    if (field === "arrivalAirport") setArrivalSuggestions([]);
+    if (field === "departureAirport") setDepartureSuggestions([]);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,28 +83,61 @@ const SearchView: React.FC = () => {
     <div className="search-container">
       <h2 className="search-title">Flight Search</h2>
       <form className="search-form" onSubmit={handleSubmit}>
-        <label>
+        {/* Departure Airport */}
+        <label style={{ position: "relative" }}>
           Departure Airport
           <input
             type="text"
             name="departureAirport"
-            placeholder="e.g. San Francisco"
             value={formData.departureAirport}
             onChange={handleInputChange}
+            placeholder="e.g. San Francisco"
+            autoComplete="off"
           />
+          {departureSuggestions.length > 0 && (
+            <ul className="suggestions-list">
+              {departureSuggestions.map((airport) => (
+                <li
+                  key={airport.id}
+                  onClick={() =>
+                    handleAirportSelect(airport.iataCode, "departureAirport")
+                  }
+                >
+                  {airport.cityName} ({airport.iataCode})
+                </li>
+              ))}
+            </ul>
+          )}
         </label>
 
-        <label>
+        {/* Arrival Airport */}
+        <label style={{ position: "relative" }}>
           Arrival Airport
           <input
             type="text"
             name="arrivalAirport"
-            placeholder="e.g. Los Angeles"
             value={formData.arrivalAirport}
             onChange={handleInputChange}
+            placeholder="e.g. Mexico City"
+            autoComplete="off"
           />
+          {arrivalSuggestions.length > 0 && (
+            <ul className="suggestions-list">
+              {arrivalSuggestions.map((airport) => (
+                <li
+                  key={airport.id}
+                  onClick={() =>
+                    handleAirportSelect(airport.iataCode, "arrivalAirport")
+                  }
+                >
+                  {airport.cityName} ({airport.iataCode})
+                </li>
+              ))}
+            </ul>
+          )}
         </label>
 
+        {/* Dates */}
         <label>
           Departure Date
           <input
@@ -88,12 +154,15 @@ const SearchView: React.FC = () => {
           <input
             type="date"
             name="returnDate"
-            min={new Date().toISOString().split("T")[0]}
+            min={
+              formData.departureDate || new Date().toISOString().split("T")[0]
+            }
             value={formData.returnDate}
             onChange={handleInputChange}
           />
         </label>
 
+        {/* Currency */}
         <label>
           Currency
           <select
@@ -107,6 +176,7 @@ const SearchView: React.FC = () => {
           </select>
         </label>
 
+        {/* Non-stop */}
         <label className="nonstop-checkbox">
           <input
             type="checkbox"
