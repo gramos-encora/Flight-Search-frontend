@@ -1,45 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { fetchFlights } from "../../network/NetworkManager";
 import "../../styles/FlightResultsView.css";
 
-// Dummy data for mockup purposes
-const mockFlights = [
-  {
-    id: "1",
-    departure: "2025-06-01T08:00",
-    arrival: "2025-06-01T12:30",
-    from: { name: "San Francisco International", code: "SFO" },
-    to: { name: "Los Angeles International", code: "LAX" },
-    airline: { name: "Delta Air Lines", code: "DL" },
-    duration: "4h 30m",
-    price: 320,
-    currency: "USD",
-  },
-  {
-    id: "2",
-    departure: "2025-06-01T09:00",
-    arrival: "2025-06-01T13:00",
-    from: { name: "San Francisco International", code: "SFO" },
-    to: { name: "Los Angeles International", code: "LAX" },
-    airline: { name: "American Airlines", code: "AA" },
-    duration: "4h 0m",
-    price: 280,
-    currency: "USD",
-  },
-];
-
 const FlightResultsView: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const formData = location.state;
+  const [flights, setFlights] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!formData) {
+      navigate("/");
+      return;
+    }
+
+    fetchFlights(formData)
+      .then((data) => {
+        setFlights(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [formData, navigate]);
+
   const handleRowClick = (id: string) => {
-    console.log(id);
+    console.log("Clicked flight ID:", id);
   };
+
+  if (loading) return <div>Loading flights...</div>;
 
   return (
     <div className="results-container">
-      <button className="back-button" onClick={() => console.log("back")}>
+      <button className="back-button" onClick={() => navigate("/")}>
         ← Back to Search
       </button>
       <h2>Available Flights</h2>
       <div className="flights-list">
-        {mockFlights.map((flight) => (
+        {flights.map((flight) => (
           <div
             key={flight.id}
             className="flight-row"
@@ -47,22 +48,28 @@ const FlightResultsView: React.FC = () => {
           >
             <div>
               <strong>
-                {flight.from.name} ({flight.from.code})
+                {flight.itineraries[0].segments[0].departure.iataCode}
               </strong>{" "}
               →{" "}
               <strong>
-                {flight.to.name} ({flight.to.code})
+                {flight.itineraries[0].segments.slice(-1)[0].arrival.iataCode}
               </strong>
             </div>
             <div>
-              {new Date(flight.departure).toLocaleString()} -{" "}
-              {new Date(flight.arrival).toLocaleString()}
+              {new Date(
+                flight.itineraries[0].segments[0].departure.at
+              ).toLocaleString()}{" "}
+              -{" "}
+              {new Date(
+                flight.itineraries[0].segments.slice(-1)[0].arrival.at
+              ).toLocaleString()}
             </div>
             <div>
-              {flight.airline.name} ({flight.airline.code}) · {flight.duration}
+              {flight.itineraries[0].segments[0].carrierCode} ·{" "}
+              {flight.itineraries[0].duration.replace("PT", "").toLowerCase()}
             </div>
             <div>
-              Total: {flight.currency} ${flight.price}
+              Total: {flight.price.currency} ${flight.price.total}
             </div>
           </div>
         ))}
