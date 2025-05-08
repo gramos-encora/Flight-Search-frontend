@@ -1,0 +1,46 @@
+/* FlightResultsView.css */
+
+.results-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: #f0f8ff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .back-button {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    text-decoration: underline;
+  }
+  
+  .flights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .flight-row {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s;
+    background-color: white;
+  }
+  
+  .flight-row:hover {
+    background-color: #e9f4ff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+  }
+  
+  .flight-row div {
+    margin-bottom: 0.3rem;
+  }
+  
