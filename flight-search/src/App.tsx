@@ -8,7 +8,7 @@ import SearchView from "./components/SearchView/SearchView";
 function App() {
   return (
     <>
-      <DetailsView></DetailsView>
+      <SearchView></SearchView>
     </>
   );
 }
