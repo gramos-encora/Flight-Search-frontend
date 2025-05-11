@@ -11,6 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SearchView />} />
         <Route path="/results" element={<FlightResultsView />} />
+        <Route path="/details" element={<DetailsView />} />
       </Routes>
     </Router>
   );
