@@ -28,6 +28,14 @@ const FlightResultsView: React.FC = () => {
       });
   }, [formData, navigate]);
 
+  const parseDuration = (isoDuration: string) => {
+    const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+    if (!match) return "0m";
+    const hours = match[1] ? `${match[1]}h` : "";
+    const minutes = match[2] ? `${match[2]}m` : "";
+    return `${hours} ${minutes}`.trim();
+  };
+
   if (loading) return <div>Loading flights...</div>;
 
   return (
@@ -47,6 +55,8 @@ const FlightResultsView: React.FC = () => {
               const segments = itinerary.segments;
               const first = segments[0];
               const last = segments[segments.length - 1];
+              const stops = segments.length - 1;
+              const duration = parseDuration(itinerary.duration);
 
               return (
                 <div key={itineraryIndex} className="itinerary-section styled">
@@ -66,9 +76,25 @@ const FlightResultsView: React.FC = () => {
                     {new Date(first.departure.at).toLocaleString()} –{" "}
                     {new Date(last.arrival.at).toLocaleString()}
                   </div>
+                  <div className="flight-section">
+                    <strong>Duration:</strong> {duration} |{" "}
+                    <strong>Stops:</strong> {stops}
+                  </div>
+                  <ul className="segment-list">
+                    {segments.map((seg, idx) => (
+                      <li key={idx}>
+                        {seg.departure.iataCode} → {seg.arrival.iataCode} |
+                        Flight {seg.carrier.iataCode} {seg.flightNumber}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               );
             })}
+            <div className="flight-section">
+              <strong>Price per Traveler:</strong> {flight.price.currency} $
+              {flight.travelerPricings[0].price.total}
+            </div>
             <div className="flight-section">
               <strong>Total:</strong> {flight.price.currency} $
               {flight.price.total}

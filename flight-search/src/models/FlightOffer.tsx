@@ -11,7 +11,7 @@ export interface FlightOffer {
   id: string;
   itineraries: Itinerary[];
   price: RawPrice;
-  travelerPricings?: TravelerPricing[];
+  travelerPricings: TravelerPricing[];
 }
 
 export interface Itinerary {
