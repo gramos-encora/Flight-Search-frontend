@@ -129,9 +129,15 @@ export const fetchFlights = async (
         clazz: fds.clazz || undefined,
         includedCheckedBags: fds.includedCheckedBags || undefined,
         includedCabinBags: fds.includedCabinBags || undefined,
+        amenities: fds.amenities.map((amenity: any) => ({
+          name: amenity.description,
+          chargeable: amenity.chargeable,
+        })),
       })),
     })),
   }));
+
+  console.log(flights[0].travelerPricings[0].fareDetailsBySegment[0]);
 
   return flights;
 };
