@@ -1,37 +1,6 @@
 import { Airline } from "./Airline";
 import { AirportInfo } from "./Airport";
 
-export interface FlightOfferResponse {
-  data: FlightOfferRaw[];
-  dictionaries: {
-    carriers: Record<string, string>;
-  };
-}
-
-interface FlightOfferRaw {
-  id: string;
-  itineraries: RawItinerary[];
-  price: RawPrice;
-}
-
-interface RawItinerary {
-  duration: string;
-  segments: RawSegment[];
-}
-
-interface RawSegment {
-  id: string;
-  carrierCode: string;
-  departure: RawLocation;
-  arrival: RawLocation;
-  duration: string;
-}
-
-interface RawLocation {
-  iataCode: string;
-  at: string;
-}
-
 interface RawPrice {
   currency: string;
   total: string;
@@ -58,7 +27,7 @@ export interface Segment {
   carrier: Airline;
   flightNumber?: string;
   operatingCarrier?: Airline;
-  aircraft?: string;
+  aircraft?: { code: string };
   cabin?: string;
   clazz?: string;
   amenities?: Amenity[];

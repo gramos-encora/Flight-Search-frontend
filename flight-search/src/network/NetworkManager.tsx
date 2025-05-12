@@ -84,19 +84,52 @@ export const fetchFlights = async (
         departure: {
           ...resolvedAirports[segment.departure.iataCode],
           at: segment.departure.at,
+          terminal: segment.departure.terminal,
         },
         arrival: {
           ...resolvedAirports[segment.arrival.iataCode],
           at: segment.arrival.at,
+          terminal: segment.arrival.terminal,
         },
         duration: segment.duration,
         carrier: {
           iataCode: segment.carrierCode,
           commonName: carriersDict[segment.carrierCode] || segment.carrierCode,
         },
+        flightNumber: segment.number,
+        operatingCarrier: segment.operating?.carrierCode
+          ? {
+              iataCode: segment.operating.carrierCode,
+              commonName:
+                carriersDict[segment.operating.carrierCode] ||
+                segment.operating.carrierCode,
+            }
+          : undefined,
+        aircraft: segment.aircraft,
       })),
     })),
-    price: flight.price,
+    price: {
+      currency: flight.price.currency,
+      total: flight.price.total,
+    },
+    travelerPricings: flight.travelerPricings.map((tp: any) => ({
+      travelerId: tp.travelerId,
+      travelerType: tp.travelerType,
+      price: {
+        currency: tp.price.currency,
+        total: tp.price.total,
+        base: tp.price.base,
+        fees: tp.price.fees || [],
+      },
+      fareDetailsBySegment: tp.fareDetailsBySegment.map((fds: any) => ({
+        segmentId: fds.segmentId,
+        cabin: fds.cabin,
+        fareBasis: fds.fareBasis,
+        clazz: fds.clazz || undefined,
+        includedCheckedBags: fds.includedCheckedBags || undefined,
+        includedCabinBags: fds.includedCabinBags || undefined,
+      })),
+    })),
   }));
 
   return flights;
