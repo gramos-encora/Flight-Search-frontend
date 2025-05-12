@@ -2,15 +2,8 @@ import React, { ChangeEvent, useState } from "react";
 import "../../styles/SearchView.css";
 import { fetchAirports } from "../../network/NetworkManager";
 import { Airport } from "../../models/Airport";
-
-interface SearchForm {
-  departureAirport: string;
-  arrivalAirport: string;
-  departureDate: string;
-  returnDate: string;
-  currency: string;
-  isNonStop: boolean;
-}
+import { useNavigate } from "react-router-dom";
+import { SearchForm } from "../../models/SearchForm";
 
 const SearchView: React.FC = () => {
   const [formData, setFormData] = useState<SearchForm>({
@@ -74,9 +67,11 @@ const SearchView: React.FC = () => {
     if (field === "departureAirport") setDepartureSuggestions([]);
   };
 
+  const navigate = useNavigate();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form Data", formData);
+    navigate("/results", { state: formData });
   };
 
   return (

@@ -4,3 +4,9 @@ export interface Airport {
   countryName: string;
   iataCode: string;
 }
+
+export interface AirportInfo {
+  iataCode: string;
+  at: string;
+  cityName?: string;
+}

@@ -1,68 +1,77 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { fetchFlights } from "../../network/NetworkManager";
+import { FlightOffer } from "../../models/FlightOffer";
 import "../../styles/FlightResultsView.css";
 
-// Dummy data for mockup purposes
-const mockFlights = [
-  {
-    id: "1",
-    departure: "2025-06-01T08:00",
-    arrival: "2025-06-01T12:30",
-    from: { name: "San Francisco International", code: "SFO" },
-    to: { name: "Los Angeles International", code: "LAX" },
-    airline: { name: "Delta Air Lines", code: "DL" },
-    duration: "4h 30m",
-    price: 320,
-    currency: "USD",
-  },
-  {
-    id: "2",
-    departure: "2025-06-01T09:00",
-    arrival: "2025-06-01T13:00",
-    from: { name: "San Francisco International", code: "SFO" },
-    to: { name: "Los Angeles International", code: "LAX" },
-    airline: { name: "American Airlines", code: "AA" },
-    duration: "4h 0m",
-    price: 280,
-    currency: "USD",
-  },
-];
-
 const FlightResultsView: React.FC = () => {
-  const handleRowClick = (id: string) => {
-    console.log(id);
-  };
+  const location = useLocation();
+  const navigate = useNavigate();
+  const formData = location.state;
+  const [flights, setFlights] = useState<FlightOffer[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!formData) {
+      navigate("/");
+      return;
+    }
+
+    fetchFlights(formData)
+      .then((data) => {
+        setFlights(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [formData, navigate]);
+
+  if (loading) return <div>Loading flights...</div>;
 
   return (
     <div className="results-container">
-      <button className="back-button" onClick={() => console.log("back")}>
+      <button className="back-button styled" onClick={() => navigate("/")}>
         ← Back to Search
       </button>
       <h2>Available Flights</h2>
       <div className="flights-list">
-        {mockFlights.map((flight) => (
+        {flights.map((flight) => (
           <div
             key={flight.id}
-            className="flight-row"
-            onClick={() => handleRowClick(flight.id)}
+            className="flight-row styled"
+            onClick={() => navigate("/details", { state: { flight } })}
           >
-            <div>
-              <strong>
-                {flight.from.name} ({flight.from.code})
-              </strong>{" "}
-              →{" "}
-              <strong>
-                {flight.to.name} ({flight.to.code})
-              </strong>
-            </div>
-            <div>
-              {new Date(flight.departure).toLocaleString()} -{" "}
-              {new Date(flight.arrival).toLocaleString()}
-            </div>
-            <div>
-              {flight.airline.name} ({flight.airline.code}) · {flight.duration}
-            </div>
-            <div>
-              Total: {flight.currency} ${flight.price}
+            {flight.itineraries.map((itinerary, itineraryIndex) => {
+              const segments = itinerary.segments;
+              const first = segments[0];
+              const last = segments[segments.length - 1];
+
+              return (
+                <div key={itineraryIndex} className="itinerary-section styled">
+                  <h3>
+                    {itineraryIndex === 0 ? "Outbound" : "Inbound"} Flight
+                  </h3>
+                  <div className="flight-section">
+                    <strong>
+                      {first.departure.cityName} ({first.departure.iataCode})
+                    </strong>{" "}
+                    →{" "}
+                    <strong>
+                      {last.arrival.cityName} ({last.arrival.iataCode})
+                    </strong>
+                  </div>
+                  <div className="flight-section">
+                    {new Date(first.departure.at).toLocaleString()} –{" "}
+                    {new Date(last.arrival.at).toLocaleString()}
+                  </div>
+                </div>
+              );
+            })}
+            <div className="flight-section">
+              <strong>Total:</strong> {flight.price.currency} $
+              {flight.price.total}
             </div>
           </div>
         ))}
