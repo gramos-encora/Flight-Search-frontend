@@ -89,6 +89,7 @@ const SearchView: React.FC = () => {
             onChange={handleInputChange}
             placeholder="e.g. San Francisco"
             autoComplete="off"
+            required
           />
           {departureSuggestions.length > 0 && (
             <ul className="suggestions-list">
@@ -116,6 +117,7 @@ const SearchView: React.FC = () => {
             onChange={handleInputChange}
             placeholder="e.g. Mexico City"
             autoComplete="off"
+            required
           />
           {arrivalSuggestions.length > 0 && (
             <ul className="suggestions-list">
