@@ -3,7 +3,7 @@
   max-width: 1200px;
   margin: 0 auto;
   font-family: 'Segoe UI', sans-serif;
-  color: #1e293b; /* gray-800 */
+  color: #1e293b; 
 }
 
 .back-button.styled {
@@ -108,7 +108,19 @@
   list-style: disc;
 }
 
+.amenity-name {
+  font-weight: bold;
+}
 
+.chargeable {
+  color: #d9534f; 
+  font-weight: 500;
+}
+
+.free {
+  color: #5cb85c; 
+  font-weight: 500;
+}
 
 .price-column {
   background-color: #f0f8ff;

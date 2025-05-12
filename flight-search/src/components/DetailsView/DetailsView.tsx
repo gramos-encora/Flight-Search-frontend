@@ -62,10 +62,6 @@ const DetailsView: React.FC = () => {
                   </p>
                 )}
                 <p className="details">Aircraft: {segment.aircraft ?? "N/A"}</p>
-                <p className="details">
-                  Cabin: {segment.cabin ?? "N/A"}, Class:{" "}
-                  {segment.clazz ?? "N/A"}
-                </p>
               </div>
             ))
           )}
@@ -110,7 +106,7 @@ const DetailsView: React.FC = () => {
                             alignItems: "center",
                           }}
                         >
-                          <h4>Amenities Segment {fareBySegment.segmentId}</h4>
+                          <h4>Segment {fareBySegment.segmentId}</h4>
                           <span>
                             {openAmenities[
                               `${tp.travelerId}-${fareBySegment.segmentId}`
@@ -119,14 +115,31 @@ const DetailsView: React.FC = () => {
                               : "▼"}
                           </span>
                         </div>
+
+                        {/* Cabina y Clase */}
+                        <p className="details">
+                          Cabin: <strong>{fareBySegment.cabin ?? "N/A"}</strong>
+                          , Class:
+                          <strong>{fareBySegment.clazz ?? "N/A"}</strong>
+                        </p>
+
                         {openAmenities[
                           `${tp.travelerId}-${fareBySegment.segmentId}`
                         ] && (
                           <ul>
                             {fareBySegment.amenities.map((amenity, i) => (
                               <li key={i}>
-                                {amenity.name} -{" "}
-                                {amenity.chargeable ? "Chargeable" : "Free"}
+                                <span className="amenity-name">
+                                  {amenity.name}
+                                </span>{" "}
+                                —{" "}
+                                <span
+                                  className={
+                                    amenity.chargeable ? "chargeable" : "free"
+                                  }
+                                >
+                                  {amenity.chargeable ? "Chargeable" : "Free"}
+                                </span>
                               </li>
                             ))}
                           </ul>
