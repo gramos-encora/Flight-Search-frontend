@@ -11,6 +11,7 @@ const SearchView: React.FC = () => {
     arrivalAirport: "",
     departureDate: "",
     returnDate: "",
+    adults: 1,
     currency: "USD",
     isNonStop: false,
   });
@@ -153,6 +154,18 @@ const SearchView: React.FC = () => {
               formData.departureDate || new Date().toISOString().split("T")[0]
             }
             value={formData.returnDate}
+            onChange={handleInputChange}
+          />
+        </label>
+
+        {/* Dates */}
+        <label>
+          Adults
+          <input
+            type="number"
+            name="adults"
+            min={1}
+            value={formData.adults}
             onChange={handleInputChange}
           />
         </label>

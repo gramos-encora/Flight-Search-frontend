@@ -29,7 +29,7 @@ export const fetchFlights = async (
     destination: params.arrivalAirport,
     departureDate: params.departureDate,
     returnDate: params.returnDate,
-    adults: "1",
+    adults: String(params.adults),
     nonStop: String(params.isNonStop),
     currencyCode: params.currency,
   });
