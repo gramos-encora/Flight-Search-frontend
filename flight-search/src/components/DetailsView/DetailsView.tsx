@@ -49,9 +49,7 @@ const DetailsView: React.FC = () => {
                     {segment.operatingCarrier.iataCode})
                   </p>
                 )}
-                <p className="details">
-                  Aircraft: {segment.aircraft?.code ?? "N/A"}
-                </p>
+                <p className="details">Aircraft: {segment.aircraft ?? "N/A"}</p>
                 <p className="details">
                   Cabin: {segment.cabin ?? "N/A"}, Class:{" "}
                   {segment.clazz ?? "N/A"}

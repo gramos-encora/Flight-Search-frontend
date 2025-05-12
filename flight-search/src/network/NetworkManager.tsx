@@ -40,6 +40,7 @@ export const fetchFlights = async (
   const raw = await response.json();
   const rawData = raw.data;
   const carriersDict = raw.dictionaries.carriers || {};
+  const aircraftsDict = raw.dictionaries.aircraft || {};
 
   // --- Extrae todos los códigos IATA únicos ---
   const uniqueIataCodes = new Set<string>();
@@ -105,7 +106,7 @@ export const fetchFlights = async (
                 segment.operating.carrierCode,
             }
           : undefined,
-        aircraft: segment.aircraft,
+        aircraft: aircraftsDict[segment.aircraft.code] || segment.aircraft.code,
       })),
     })),
     price: {

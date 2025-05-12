@@ -27,7 +27,7 @@ export interface Segment {
   carrier: Airline;
   flightNumber?: string;
   operatingCarrier?: Airline;
-  aircraft?: { code: string };
+  aircraft?: string;
   cabin?: string;
   clazz?: string;
   amenities?: Amenity[];
