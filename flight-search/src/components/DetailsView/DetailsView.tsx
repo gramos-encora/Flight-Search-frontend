@@ -18,7 +18,7 @@ const DetailsView: React.FC = () => {
 
   return (
     <div className="details-wrapper">
-      <button className="back-button" onClick={() => navigate(-1)}>
+      <button className="back-button styled" onClick={() => navigate(-1)}>
         ← Back
       </button>
 
@@ -31,26 +31,28 @@ const DetailsView: React.FC = () => {
                 <h3>
                   Segment {idx + 1}-{index + 1}
                 </h3>
-                <p>
+                <p className="time-info">
                   {new Date(segment.departure.at).toLocaleString()} –{" "}
                   {new Date(segment.arrival.at).toLocaleString()}
                 </p>
-                <p>
+                <p className="route">
                   {segment.departure.cityName} ({segment.departure.iataCode}) →{" "}
                   {segment.arrival.cityName} ({segment.arrival.iataCode})
                 </p>
-                <p>
-                  {segment.carrier.commonName} ({segment.carrier.iataCode}){" "}
-                  {segment.flightNumber}
+                <p className="carrier">
+                  Flight {segment.carrier.commonName} (
+                  {segment.carrier.iataCode}) {segment.flightNumber}
                 </p>
                 {segment.operatingCarrier && (
-                  <p>
+                  <p className="operated">
                     Operated by {segment.operatingCarrier.commonName} (
                     {segment.operatingCarrier.iataCode})
                   </p>
                 )}
-                <p>Aircraft: {segment.aircraft ?? "N/A"}</p>
-                <p>
+                <p className="details">
+                  Aircraft: {segment.aircraft?.code ?? "N/A"}
+                </p>
+                <p className="details">
                   Cabin: {segment.cabin ?? "N/A"}, Class:{" "}
                   {segment.clazz ?? "N/A"}
                 </p>
