@@ -42,7 +42,7 @@ export const fetchFlights = async (
   const carriersDict = raw.dictionaries.carriers || {};
   const aircraftsDict = raw.dictionaries.aircraft || {};
 
-  // --- Extrae todos los códigos IATA únicos ---
+  // --- Extraer códigos únicos de aeropuertos ---
   const uniqueIataCodes = new Set<string>();
   rawData.forEach((flight: any) => {
     flight.itineraries.forEach((itinerary: any) => {
@@ -53,29 +53,17 @@ export const fetchFlights = async (
     });
   });
 
-  // --- Promesas cacheadas por IATA ---
-  const airportPromises = new Map<string, Promise<Airport>>();
-
-  for (const code of uniqueIataCodes) {
-    if (!airportPromises.has(code)) {
-      const promise = fetchAirports(code).then((res) => {
-        const airport = res.find((a) => a.iataCode === code);
-        if (!airport) throw new Error(`No airport found for ${code}`);
-        return airport;
-      });
-      airportPromises.set(code, promise);
-    }
-  }
-
-  // --- Espera a que todos los aeropuertos estén resueltos ---
+  // --- Hacer fetch para cada código (pero sin Map/caché del frontend) ---
   const resolvedAirports: Record<string, Airport> = {};
   await Promise.all(
-    Array.from(airportPromises.entries()).map(async ([code, promise]) => {
-      resolvedAirports[code] = await promise;
+    Array.from(uniqueIataCodes).map(async (code) => {
+      const airportData = await fetchAirports(code);
+      const airport = airportData.find((a) => a.iataCode === code);
+      if (!airport) throw new Error(`No airport found for ${code}`);
+      resolvedAirports[code] = airport;
     })
   );
 
-  // --- Mapeo final de ofertas de vuelo ---
   const flights: FlightOffer[] = rawData.map((flight: any) => ({
     id: flight.id,
     itineraries: flight.itineraries.map((itinerary: any) => ({
@@ -136,8 +124,6 @@ export const fetchFlights = async (
       })),
     })),
   }));
-
-  console.log(flights[0].travelerPricings[0].fareDetailsBySegment[0]);
 
   return flights;
 };
