@@ -17,6 +17,38 @@
   background-color: #2563eb;
 }
 
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  font-size: 1rem;
+}
+
+.sort-label {
+  font-weight: 500;
+}
+
+.sort-select {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.sort-select:hover {
+  border-color: #888;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
 .flight-row.styled {
   border: 1px solid #e2e8f0;
   border-radius: 12px;
