@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  FareDetail,
   FlightOffer,
   Segment,
   TravelerPricing,
@@ -11,6 +12,17 @@ const DetailsView: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const flight: FlightOffer = state?.flight;
+  const [openAmenities, setOpenAmenities] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const toggleAmenities = (travelerId: string, segmentId: string) => {
+    const key = `${travelerId}-${segmentId}`;
+    setOpenAmenities((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   if (!flight) {
     return <div>No flight data available.</div>;
@@ -49,26 +61,7 @@ const DetailsView: React.FC = () => {
                     {segment.operatingCarrier.iataCode})
                   </p>
                 )}
-                <p className="details">
-                  Aircraft: {segment.aircraft?.code ?? "N/A"}
-                </p>
-                <p className="details">
-                  Cabin: {segment.cabin ?? "N/A"}, Class:{" "}
-                  {segment.clazz ?? "N/A"}
-                </p>
-                {segment.amenities && segment.amenities.length > 0 && (
-                  <div className="fare-box">
-                    <h4>Amenities</h4>
-                    <ul>
-                      {segment.amenities.map((amenity, i) => (
-                        <li key={i}>
-                          {amenity.name} -{" "}
-                          {amenity.chargeable ? "Chargeable" : "Free"}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <p className="details">Aircraft: {segment.aircraft ?? "N/A"}</p>
               </div>
             ))
           )}
@@ -93,11 +86,67 @@ const DetailsView: React.FC = () => {
                 <p>
                   <strong>Total:</strong> {tp.price.total} {tp.price.currency}
                 </p>
-                {tp.price.fees?.map((fee, j) => (
-                  <p key={j}>
-                    <strong>Fee ({fee.type}):</strong> {fee.amount}
-                  </p>
-                ))}
+                {tp.fareDetailsBySegment.map(
+                  (fareBySegment: FareDetail, i) =>
+                    fareBySegment.amenities &&
+                    fareBySegment.amenities.length > 0 && (
+                      <div key={i} className="fare-box">
+                        <div
+                          className="fare-box-header"
+                          onClick={() =>
+                            toggleAmenities(
+                              tp.travelerId,
+                              fareBySegment.segmentId
+                            )
+                          }
+                          style={{
+                            cursor: "pointer",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <h4>Segment {fareBySegment.segmentId}</h4>
+                          <span>
+                            {openAmenities[
+                              `${tp.travelerId}-${fareBySegment.segmentId}`
+                            ]
+                              ? "▲"
+                              : "▼"}
+                          </span>
+                        </div>
+
+                        {/* Cabina y Clase */}
+                        <p className="details">
+                          Cabin: <strong>{fareBySegment.cabin ?? "N/A"}</strong>
+                          , Class:
+                          <strong>{fareBySegment.clazz ?? "N/A"}</strong>
+                        </p>
+
+                        {openAmenities[
+                          `${tp.travelerId}-${fareBySegment.segmentId}`
+                        ] && (
+                          <ul>
+                            {fareBySegment.amenities.map((amenity, i) => (
+                              <li key={i}>
+                                <span className="amenity-name">
+                                  {amenity.name}
+                                </span>{" "}
+                                —{" "}
+                                <span
+                                  className={
+                                    amenity.chargeable ? "chargeable" : "free"
+                                  }
+                                >
+                                  {amenity.chargeable ? "Chargeable" : "Free"}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )
+                )}
               </div>
             ))}
           </div>

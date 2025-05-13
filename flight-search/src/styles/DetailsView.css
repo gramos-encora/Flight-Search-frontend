@@ -3,7 +3,7 @@
   max-width: 1200px;
   margin: 0 auto;
   font-family: 'Segoe UI', sans-serif;
-  color: #1e293b; /* gray-800 */
+  color: #1e293b; 
 }
 
 .back-button.styled {
@@ -96,19 +96,31 @@
   background-color: #ffffff;
 }
 
-.fare-box h4 {
-  margin-bottom: 0.5rem;
-  color: #1e40af;
+.fare-box-header h4 {
+  margin: 0;
   font-weight: 600;
+  color: #1e40af;
 }
 
 .fare-box ul {
+  margin-top: 0.5rem;
   padding-left: 1.2rem;
   list-style: disc;
-  color: #334155;
-  font-size: 0.9rem;
 }
 
+.amenity-name {
+  font-weight: bold;
+}
+
+.chargeable {
+  color: #d9534f; 
+  font-weight: 500;
+}
+
+.free {
+  color: #5cb85c; 
+  font-weight: 500;
+}
 
 .price-column {
   background-color: #f0f8ff;

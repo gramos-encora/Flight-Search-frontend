@@ -40,8 +40,9 @@ export const fetchFlights = async (
   const raw = await response.json();
   const rawData = raw.data;
   const carriersDict = raw.dictionaries.carriers || {};
+  const aircraftsDict = raw.dictionaries.aircraft || {};
 
-  // --- Extrae todos los códigos IATA únicos ---
+  // --- Extraer códigos únicos de aeropuertos ---
   const uniqueIataCodes = new Set<string>();
   rawData.forEach((flight: any) => {
     flight.itineraries.forEach((itinerary: any) => {
@@ -52,29 +53,17 @@ export const fetchFlights = async (
     });
   });
 
-  // --- Promesas cacheadas por IATA ---
-  const airportPromises = new Map<string, Promise<Airport>>();
-
-  for (const code of uniqueIataCodes) {
-    if (!airportPromises.has(code)) {
-      const promise = fetchAirports(code).then((res) => {
-        const airport = res.find((a) => a.iataCode === code);
-        if (!airport) throw new Error(`No airport found for ${code}`);
-        return airport;
-      });
-      airportPromises.set(code, promise);
-    }
-  }
-
-  // --- Espera a que todos los aeropuertos estén resueltos ---
+  // --- Hacer fetch para cada código (pero sin Map/caché del frontend) ---
   const resolvedAirports: Record<string, Airport> = {};
   await Promise.all(
-    Array.from(airportPromises.entries()).map(async ([code, promise]) => {
-      resolvedAirports[code] = await promise;
+    Array.from(uniqueIataCodes).map(async (code) => {
+      const airportData = await fetchAirports(code);
+      const airport = airportData.find((a) => a.iataCode === code);
+      if (!airport) throw new Error(`No airport found for ${code}`);
+      resolvedAirports[code] = airport;
     })
   );
 
-  // --- Mapeo final de ofertas de vuelo ---
   const flights: FlightOffer[] = rawData.map((flight: any) => ({
     id: flight.id,
     itineraries: flight.itineraries.map((itinerary: any) => ({
@@ -105,7 +94,7 @@ export const fetchFlights = async (
                 segment.operating.carrierCode,
             }
           : undefined,
-        aircraft: segment.aircraft,
+        aircraft: aircraftsDict[segment.aircraft.code] || segment.aircraft.code,
       })),
     })),
     price: {
@@ -128,6 +117,10 @@ export const fetchFlights = async (
         clazz: fds.clazz || undefined,
         includedCheckedBags: fds.includedCheckedBags || undefined,
         includedCabinBags: fds.includedCabinBags || undefined,
+        amenities: fds.amenities.map((amenity: any) => ({
+          name: amenity.description,
+          chargeable: amenity.chargeable,
+        })),
       })),
     })),
   }));

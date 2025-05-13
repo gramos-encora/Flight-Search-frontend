@@ -27,10 +27,9 @@ export interface Segment {
   carrier: Airline;
   flightNumber?: string;
   operatingCarrier?: Airline;
-  aircraft?: { code: string };
+  aircraft?: string;
   cabin?: string;
   clazz?: string;
-  amenities?: Amenity[];
 }
 
 export interface Amenity {
@@ -57,6 +56,7 @@ export interface FareDetail {
   clazz?: string;
   includedCheckedBags?: { quantity: number };
   includedCabinBags?: { quantity: number };
+  amenities?: Amenity[];
 }
 
 export interface Fee {
