@@ -138,7 +138,27 @@ const DetailsView: React.FC = () => {
                             alignItems: "center",
                           }}
                         >
-                          <h4>Segment {fareBySegment.segmentId}</h4>
+                          {(() => {
+                            // Buscar el índice del segmento en las itineraries
+                            let label = `Segment ${fareBySegment.segmentId}`;
+                            flight.itineraries.forEach(
+                              (itinerary, itineraryIndex) => {
+                                itinerary.segments.forEach(
+                                  (segment, segmentIndex) => {
+                                    if (
+                                      segment.id === fareBySegment.segmentId
+                                    ) {
+                                      label = `Segment ${itineraryIndex + 1}-${
+                                        segmentIndex + 1
+                                      }`;
+                                    }
+                                  }
+                                );
+                              }
+                            );
+                            return <h4>{label}</h4>;
+                          })()}
+
                           <span>
                             {openAmenities[
                               `${tp.travelerId}-${fareBySegment.segmentId}`
@@ -163,8 +183,8 @@ const DetailsView: React.FC = () => {
                               <li key={i}>
                                 <span className="amenity-name">
                                   {amenity.name}
-                                </span>{" "}
-                                —{" "}
+                                </span>
+                                —
                                 <span
                                   className={
                                     amenity.chargeable ? "chargeable" : "free"
