@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import "../../styles/SearchView.css";
-import { fetchAirports } from "../../network/NetworkManager";
+import { fetchAirports, fetchFlights } from "../../network/NetworkManager";
 import { Airport } from "../../models/Airport";
 import { useNavigate } from "react-router-dom";
 import { SearchForm } from "../../models/SearchForm";
@@ -69,10 +69,19 @@ const SearchView: React.FC = () => {
   };
 
   const navigate = useNavigate();
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Data", formData);
-    navigate("/results", { state: formData });
+    setLoading(true);
+    try {
+      const flights = await fetchFlights(formData);
+      navigate("/results", { state: { formData, flights } });
+    } catch (error) {
+      console.error("Error fetching flights:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -197,7 +206,13 @@ const SearchView: React.FC = () => {
           Non-stop
         </label>
 
-        <button type="submit">Search</button>
+        {loading ? (
+          <div className="loading-indicator">Loading flights...</div>
+        ) : (
+          <button type="submit" className="submit-button styled">
+            Search Flights
+          </button>
+        )}
       </form>
     </div>
   );

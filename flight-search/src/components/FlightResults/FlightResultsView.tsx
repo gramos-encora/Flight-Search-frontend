@@ -7,27 +7,15 @@ import "../../styles/FlightResultsView.css";
 const FlightResultsView: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const formData = location.state;
-  const [flights, setFlights] = useState<FlightOffer[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { formData, flights: initialFlights } = location.state || {};
+  const [flights, setFlights] = useState<FlightOffer[]>(initialFlights || []);
   const [sortBy, setSortBy] = useState<"price" | "duration" | "none">("none");
 
   useEffect(() => {
-    if (!formData) {
-      navigate("/");
-      return;
+    if (!formData || !initialFlights) {
+      navigate("/"); // redirige si no viniste desde el formulario
     }
-
-    fetchFlights(formData)
-      .then((data) => {
-        setFlights(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [formData, navigate]);
+  }, [formData, initialFlights, navigate]);
 
   const getMinutesFromISO = (isoDuration: string): number => {
     const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
@@ -62,8 +50,6 @@ const FlightResultsView: React.FC = () => {
     }
     return 0;
   });
-
-  if (loading) return <div>Loading flights...</div>;
 
   return (
     <div className="results-container">

@@ -24,6 +24,32 @@ const DetailsView: React.FC = () => {
     }));
   };
 
+  // Función para extraer minutos totales de un string tipo "PT3H45M"
+  const getMinutesFromISO = (iso: string) => {
+    const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+    const hours = match?.[1] ? parseInt(match[1]) : 0;
+    const minutes = match?.[2] ? parseInt(match[2]) : 0;
+    return hours * 60 + minutes;
+  };
+
+  // Formatea minutos a "Xh Ym"
+  const formatDuration = (totalMinutes: number) => {
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return `${h > 0 ? h + "h " : ""}${m > 0 ? m + "m" : ""}`.trim();
+  };
+
+  // Calculamos stops y duración total
+  const stops =
+    flight?.itineraries.reduce((acc, it) => acc + it.segments.length - 1, 0) ??
+    0;
+  const totalMinutes =
+    flight?.itineraries.reduce(
+      (acc, it) => acc + getMinutesFromISO(it.duration),
+      0
+    ) ?? 0;
+  const duration = formatDuration(totalMinutes);
+
   if (!flight) {
     return <div>No flight data available.</div>;
   }
@@ -46,6 +72,12 @@ const DetailsView: React.FC = () => {
                 <p className="time-info">
                   {new Date(segment.departure.at).toLocaleString()} –{" "}
                   {new Date(segment.arrival.at).toLocaleString()}
+                </p>
+                <p>
+                  <strong>Total Duration:</strong> {duration}
+                </p>
+                <p>
+                  <strong>Total Stops:</strong> {stops}
                 </p>
                 <p className="route">
                   {segment.departure.cityName} ({segment.departure.iataCode}) →{" "}
@@ -106,7 +138,27 @@ const DetailsView: React.FC = () => {
                             alignItems: "center",
                           }}
                         >
-                          <h4>Segment {fareBySegment.segmentId}</h4>
+                          {(() => {
+                            // Buscar el índice del segmento en las itineraries
+                            let label = `Segment ${fareBySegment.segmentId}`;
+                            flight.itineraries.forEach(
+                              (itinerary, itineraryIndex) => {
+                                itinerary.segments.forEach(
+                                  (segment, segmentIndex) => {
+                                    if (
+                                      segment.id === fareBySegment.segmentId
+                                    ) {
+                                      label = `Segment ${itineraryIndex + 1}-${
+                                        segmentIndex + 1
+                                      }`;
+                                    }
+                                  }
+                                );
+                              }
+                            );
+                            return <h4>{label}</h4>;
+                          })()}
+
                           <span>
                             {openAmenities[
                               `${tp.travelerId}-${fareBySegment.segmentId}`
@@ -131,8 +183,8 @@ const DetailsView: React.FC = () => {
                               <li key={i}>
                                 <span className="amenity-name">
                                   {amenity.name}
-                                </span>{" "}
-                                —{" "}
+                                </span>
+                                —
                                 <span
                                   className={
                                     amenity.chargeable ? "chargeable" : "free"
