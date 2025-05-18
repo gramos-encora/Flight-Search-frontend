@@ -1,0 +1,168 @@
+.details-wrapper {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
+  color: #1e293b; 
+}
+
+.back-button.styled {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  margin-bottom: 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.back-button.styled:hover {
+  background-color: #2563eb;
+}
+
+.details-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.segments-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.segment-box {
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.segment-box h3 {
+  font-size: 1.1rem;
+  color: #1e40af;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Horario principal */
+.segment-box .time-info {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Ruta de ciudades */
+.segment-box .route {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+/* Aerolínea y número de vuelo */
+.segment-box .carrier {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+/* Operado por... */
+.segment-box .operated {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Avión, cabina y clase */
+.segment-box .details {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+/* Amenidades */
+.fare-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background-color: #ffffff;
+}
+
+.fare-box-header h4 {
+  margin: 0;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.fare-box ul {
+  margin-top: 0.5rem;
+  padding-left: 1.2rem;
+  list-style: disc;
+}
+
+.amenity-name {
+  font-weight: bold;
+}
+
+.chargeable {
+  color: #d9534f; 
+  font-weight: 500;
+}
+
+.free {
+  color: #5cb85c; 
+  font-weight: 500;
+}
+
+.price-column {
+  background-color: #f0f8ff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+.price-breakdown {
+  background-color: white;
+  padding: 1.5rem;
+  border: 1px solid #cce0ff;
+  border-radius: 12px;
+}
+
+.price-breakdown h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #0c4a6e;
+  font-weight: 600;
+}
+
+.price-breakdown p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+}
+
+.price-breakdown p strong {
+  color: #0f172a;
+}
+
+.per-traveler-box {
+  margin-top: 1.2rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.per-traveler-box h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #1e40af;
+  font-weight: 600;
+}
