@@ -12,13 +12,12 @@ RUN npm run build
 # Etapa 2: Servidor con Nginx
 FROM nginx:alpine
 
-# Copiar el build generado al directorio que sirve Nginx
+# Copia el build generado al directorio que sirve Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copiar configuración personalizada de Nginx si lo deseas
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Copiar configuración personalizada de Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Exponer el puerto 80
-EXPOSE 80
+EXPOSE 9090
 
 CMD ["nginx", "-g", "daemon off;"]
