@@ -24,13 +24,66 @@ git clone https://github.com/your-username/your-repo.git
 cd your-repo
 ```
 
+Go to the backend repository and clone it also:
+
+https://github.com/gramos-encora/Flight-Search-backend
+
+Create this file structure:
+
+```
+FlightSearch
+├── Flight-Search-backend/
+│   └── flight-search/
+├── Flight-Search/
+│   └── flight-search/
+├── .env
+└── docker-compose.yml
+```
+
+docker-compose.yml
+``` yml
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Flight-Search-backend/flight-search
+      dockerfile: Dockerfile
+    container_name: flight-backend
+    ports:
+      - "8080:8080"
+    environment:
+      AMADEUS_KEY: ${AMADEUS_KEY}
+      AMADEUS_SECRET: ${AMADEUS_SECRET}
+    networks:
+      - flight-app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Flight-Search/flight-search
+      dockerfile: Dockerfile
+    container_name: flight-frontend
+    ports:
+      - "9090:9090"
+    networks:
+      - flight-app
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+networks:
+  flight-app:
+    driver: bridge
+```
+
 ## Start the application with Docker Compose:
 ```bash
 docker compose up --build
 ```
 
-Open your browser and go to: http://localhost
-The frontend runs on port 80.
+Open your browser and go to: http://localhost:9090
+The frontend runs on port 9090.
 The backend runs on port 8080.
 Both services are connected via the flight-app Docker network.
 
